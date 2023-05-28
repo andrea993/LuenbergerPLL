@@ -60,7 +60,9 @@ $$
 Note that the system parameters are independent of the variable $\rho$. The information about this variable is contained within the state $\underline x$.
 
 $$ \rho = \sqrt{x_1^2 + x_2^2} = \sqrt{\underline x^T \underline x} $$
+
 and the instantaneous phase is
+
 $$ \varphi = atan2(x_2, x_1) $$
 
 Now, we can design an observer to estimate the two states. We choose a [Luenberger Observer](https://en.wikipedia.org/wiki/State_observer) for reasons that will become clear later. We augment the evolution equation with the $L$ gains matrix
