@@ -16,7 +16,7 @@ We differentiate the state $\underline x$ to obtain an ODE that drives the vecto
 
 $$ \frac{d}{dt}x_1(t) = -\rho \cdot \omega \cdot sin(\omega t + \varphi_0) = -\omega \cdot x_2(t)$$
 
-$$ \frac{d}{dt}x_1(t) = \rho\cdot \omega \cdot cos(\omega t + \varphi_0) = \omega \cdot x_1(t)$$
+$$ \frac{d}{dt}x_2(t) = \rho\cdot \omega \cdot cos(\omega t + \varphi_0) = \omega \cdot x_1(t)$$
 
 
 In matrix form, defining an output $y$ we can define
