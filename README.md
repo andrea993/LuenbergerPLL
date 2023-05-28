@@ -1,14 +1,16 @@
 # LuenbergerPLL
 
-TLDR: A Luenberger observer to track a sine wave in a noisy environment
+TLDR: `LuenbergerPLL` is a `C` routine designed for tracking sine waves in noisy environments using a particular Luenberger observer.
 
-This routine, written in C, allows tracking a sine wave subject to various disturbances and provides clean values, amplitude, and phase. It can also be used to retrieve signals in phasor form from measurements.
+The `LuenbergerPLL` routine serves as an efficient tool for tracking sine waves that are subject to various disturbances, providing clean values, amplitude, and phase. It can also be effectively utilized to extract signals in phasor form from measurements.
 
-## Repository content
+This problem frequently presents itself in the field of electrical engineering, particularly when working with alternating current (AC). For instance, when voltage or current measurements within an electrical circuit are required.
 
-This repository contains the files [LPLL.h](LPLL.h) and [LPLL.c](LPLL.c) that provides the following struct:
+This repository hosts an implementation of an algorithm that is based on a specific version of the Luenberger observer. I developed this algorithm during my spare time with the goal of creating a tracker that is efficient, robust, easy to use, and simple to tune. All you need to know is the expected frequency of the sine wave and the uncertainty associated with it.
 
-<pre><code>
+The [Derivation](#derivation) section provides a detailed explanation of how this observer is derived. However, please be aware that if you're not familiar with Control Systems and Digital Signal Processing topics, it might be challenging to follow. Regardless, you can bypass that section and directly use the library which is designed to work right out of the box.
+
+```
 struct LPLL_SS
 {
     double A[2][2]; 
@@ -16,15 +18,15 @@ struct LPLL_SS
     double C[2][2];
     double D[2];
 };
-</pre></code>
+```
 
 This struct contains the discrete time filter parameters.
 
 There is also a function:
 
-<pre><code>
+```
 struct LPLL_SS LPLL_filterDesign(double f0, double BW, double dt);
-</pre></code>
+```
 
 This function allows you to design a filter and accepts an expected sine wave frequency $f_0$ in Hz, the filter bandwidth $BW$ in Hz, and the sampling time $dt$ in seconds as inputs.
 
@@ -32,9 +34,9 @@ The filter will track the sin wave from its measurement. You can choose the band
 
 The function
 
-<pre><code>
+```
 void LPLL_step(const struct LPLL_SS *ss, double x[], double u, double y[]) 
-</pre></code>
+```
 
 allows you to filter the the signal $u_k$ that is your measurement and obtain an output vector $\underline y$. These are two outputs of the filter, which represent the reconstruction of the two coordinates of a rotating vector that is generating the wave you're measuring. The digital filter's 2-element state $\underline x$ must be passed to the filter at each iteration.
 
@@ -108,11 +110,9 @@ and the instantaneous phase is
 
 $$ \varphi = atan2(x_2, x_1) $$
 
-Now, we can design an observer to estimate the two states. We choose a [Luenberger Observer](https://en.wikipedia.org/wiki/State_observer) for reasons that will become clear later. We augment the evolution equation with the $L$ gains matrix
+Now, we can design an observer to estimate the two states. We choose a [Luenberger Observer](https://en.wikipedia.org/wiki/State_observer) for reasons that will become clear later. We augment the evolution equation with the $L$ gains matrix in order to define the estimated state $\hat{\underline x}(t)$ from the measurement signal $y_m(t)$:
 
-$$ \frac{d}{dt} \underline x(t) = A_c \cdot \underline x(t) - L(C_c \underline x(t) - y_m(t)) $$
-
-Where $y_m$ is the measured output.
+$$ \frac{d}{dt} \hat{\underline x}(t) = A_c \cdot \underline x(t) - L(C_c \hat{\underline x}(t) - y_m(t)) $$
 
 We define the closed loop update matrix 
 
@@ -147,11 +147,11 @@ This is very useful, meaning we can tune the observer simply by choosing a bandw
 
 The analog filter model will be:
 
-$$ \frac{d}{dt} \underline x(t) = A_{cl} \cdot \underline x(t) + L\cdot y_m(t) $$
+$$ \frac{d}{dt} \hat{\underline x}(t) = A_{cl} \cdot \hat{\underline x}(t) + L\cdot y_m(t) $$
 
 $$ \underline h(t) = C_I \cdot \underline x(t) $$
 
-$\underline h(t)$ is the output of the filter. We've defined a SIMO (Single Input Multiple Outputs) filter such that $\underline h(t) = \underline x(t)$ so $C_I$ is the identity matrix. This will be useful for the discretization step, which allows us to implement the filter algorithmically.
+$\underline h(t)$ is the output of the filter. We've defined a SIMO (Single Input Multiple Outputs) filter such that $\underline h(t) = \hat{\underline x}(t)$ so $C_I$ is the identity matrix. This will be useful for the discretization step, which allows us to implement the filter algorithmically.
 
 To obtain good observation performance in the discrete domain, we will discretize the fileter using the [Bilinear Transform](https://en.wikipedia.org/wiki/Bilinear_transform) with prewarping at the $f_0$ frequency. This can be see as a map from Laplace to z-transform domain such that:
 
