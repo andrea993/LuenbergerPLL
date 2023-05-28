@@ -4,6 +4,43 @@ TLDR: A Luenberger observer to track a sine wave in a noisy environment
 
 This routine, written in C, allows tracking a sine wave subject to various disturbances and provides clean values, amplitude, and phase. It can also be used to retrieve signals in phasor form from measurements.
 
+## Repository content
+
+This repository contains the files [LPLL.h](LPLL.h) and [LPLL.c](LPLL.c) that provides the following struct:
+
+<pre><code>
+struct LPLL_SS
+{
+    double A[2][2]; 
+    double B[2]; 
+    double C[2][2];
+    double D[2];
+};
+</pre></code>
+
+This struct contains the discrete time filter parameters.
+
+There is also a function:
+
+<pre><code>
+struct LPLL_SS LPLL_filterDesign(double f0, double BW, double dt);
+</pre></code>
+
+This function allows you to design a filter and accepts an expected sine wave frequency $f_0$ in Hz, the filter bandwidth $BW$ in Hz, and the sampling time $dt$ in seconds as inputs.
+
+The filter will track the sin wave from its measurement. You can choose the bandwidth $BW$ to set an uncertainty level on the sine wave frequency $f_0$. Please note, the wider the bandwidth, the more time the observer will need to converge to the sine wave.
+
+The function
+
+<pre><code>
+void LPLL_step(const struct LPLL_SS *ss, double x[], double u, double y[]) 
+</pre></code>
+
+allows you to filter the the signal $u_k$ that is your measurement and obtain an output vector $\underline y$. These are two outputs of the filter, which represent the reconstruction of the two coordinates of a rotating vector that is generating the wave you're measuring. The digital filter's 2-element state $\underline x$ must be passed to the filter at each iteration.
+
+You can see the [LPLL_test](LPLL_test.c) as example.
+
+
 ## Derivation
 
 We begin with the model of a generic vector rotating in the $x_1$, $x_2$ plane with angular speed $\omega$, and amplitude $\rho$:
@@ -120,7 +157,7 @@ To obtain good observation performance in the discrete domain, we will discretiz
 
 $$ s \leftarrow \frac{\omega}{\tan(\omega \Delta T/2)}\cdot\frac{z-1}{z+1} $$
 
-Where $\Delta T$ is the sampling time of the digital system. The prewarping allows the transfer function of the digital filter to match the one of the anolog filter at the central freqeuncy $f_0$.
+Where $\Delta T$ is the sampling time of the digital system. The prewarping allows the transfer function of the digital filter to match the one of the analog filter at the central frequency $f_0$.
 
 In the matrix state space representation, this transform becomes: 
 
@@ -148,7 +185,47 @@ $$ \underline h_k = C_d \cdot \underline x_k + D_d \cdot {y_m}_k $$
 
 The reconstruction of the state of the rotating vector at the instant $k$ will be the $\underline h_k$ vector.
 
+## Graphical example
+[otavePlotter.m](octavePlotter.m) provides an *Octave* script to plot the output of [LPLL_test](LPLL_test.m):
 
+![Example Plot](ExamplePlot.png)
 
+You can see that the observer converge to the sine wave and allow you to estimate the cleaned sin wave, the amplitude $\rho$ and the instantaneous phase. 
 
+## Phasor form estimation
+In a steady-state circuit analysis using the [Steinmetz transform](https://en.wikipedia.org/wiki/Phasor), it's common to convert time domain sine wave signals in phasor form:
 
+$$
+\rho \cdot cos(\omega t + \varphi_0) \rightarrow \frac{\rho}{\sqrt 2} e^{j \varphi_0}
+$$
+
+The *LPLL* filter allows you to estimate phasors. In fact you can derive $\rho$ as 
+
+$$ \rho = \sqrt{\underline h^T \underline h} $$
+
+However, you don't know the initial phase $\varphi_0$. What you really need is the phase displacement of signals. Hence, you need to choose a reference system for the phases, forcing a signal to have  $\varphi_0 = 0$. Then, you can easily calculate the phase displacement from the reference signal using the following trigonometric identity:
+
+$$
+tan(a - b) = \frac{sin(a) cos(b) - cos(a) sin(b)}{sin(a) sin(b) + cos(a)cos(b)}
+$$
+
+If we have two signals and one of the previous filter for each signal, we get a pair $\underline h_1$ and $\underline h_2$ of outputs.
+
+When the identity is applied to the filter output, we obtain
+
+$$
+\frac{{h_2}_2 {h_1}_1 - {h_2}_1 {h_1}_2}{{h_2}_1 {h_1}_1 - {h_2}_2 {h_1}_2} =
+\frac{\rho_1 \rho_2}{\rho_1 \rho_2} tan(\varphi_2 - \varphi_1) = 
+tan(\varphi_2 - \varphi_1)
+$$
+
+Thus, we can observe that
+$$
+\Delta \varphi = atan2({h_2}_2 {h_1}_1 - {h_2}_1 {h_1}_2, {h_2}_1 {h_1}_1 - {h_2}_2 {h_1}_2)
+$$
+
+The phasor form of the two signals will then be
+
+$$ F_1 =  \frac{\rho_1}{\sqrt 2}e^{j0} =  \frac{\rho_1}{\sqrt 2} $$
+
+$$ F_2  = \frac{\rho_2}{\sqrt 2}e^{j \Delta \varphi}  $$

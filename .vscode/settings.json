@@ -2,5 +2,8 @@
     "C_Cpp.default.compilerPath": "C:\\MinGW\\bin\\gcc.exe",
     "files.associations": {
         "math.h": "c"
-    }
+    },
+    "cSpell.words": [
+        "LPLL"
+    ]
 }
