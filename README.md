@@ -138,7 +138,7 @@ $$ \underline x_{k+1} = A_d \cdot \underline x_k + B_d \cdot {y_m}_k $$
 
 $$ \underline h_k = C_d \cdot \underline x_k + D_d \cdot {y_m}_k $$
 
-The reconstruction of the state of the rotating vector at the instant $k$ will be the $h_k$ vector.
+The reconstruction of the state of the rotating vector at the instant $k$ will be the $\underline h_k$ vector.
 
 
 
