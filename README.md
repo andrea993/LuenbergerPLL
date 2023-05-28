@@ -21,24 +21,30 @@ $$ \frac{d}{dt}x_2(t) = \rho\cdot \omega \cdot cos(\omega t + \varphi_0) = \omeg
 
 In matrix form, defining an output $y$ we can define
 
-$$\frac{d}{dt} 
-\begin{bmatrix} x_1(t) 
-\\ x_2(t) 
+$$
+\frac{d}{dt} 
+\begin{bmatrix} 
+x_1(t) \\
+x_2(t) 
 \end{bmatrix}  =
 \begin{bmatrix}
 0 & -\omega \\ 
 \omega & 0
 \end{bmatrix}
 \begin{bmatrix}
-x_1(t) \\ x_2(t)
-\end{bmatrix} $$
+x_1(t) \\ 
+x_2(t)
+\end{bmatrix}
+$$
+
 $$
 y = 
 \begin{bmatrix}
 1 & 0
 \end{bmatrix}
 \begin{bmatrix}
-x_1(t) \\ x_2(t)
+x_1(t) \\
+x_2(t)
 \end{bmatrix}
 $$
 
