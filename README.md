@@ -149,7 +149,7 @@ The analog filter model will be:
 
 $$ \frac{d}{dt} \hat{\underline x}(t) = A_{cl} \cdot \hat{\underline x}(t) + L\cdot y_m(t) $$
 
-$$ \underline h(t) = C_I \cdot \underline x(t) $$
+$$ \underline h(t) = C_I \cdot \hat{\underline x}(t) $$
 
 $\underline h(t)$ is the output of the filter. We've defined a SIMO (Single Input Multiple Outputs) filter such that $\underline h(t) = \hat{\underline x}(t)$ so $C_I$ is the identity matrix. This will be useful for the discretization step, which allows us to implement the filter algorithmically.
 
