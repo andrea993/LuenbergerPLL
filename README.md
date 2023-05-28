@@ -75,7 +75,14 @@ $$ A_{cl} \triangleq A_c - L C $$
 
 To allow the observer to converge we must define a $L$ matrix such that $A_{cl}$ is Hurwitz. Instead of looking for stable eigenvalues we can observe that if we choose an $L$ matrix in the family 
 
-$$ L = \begin{bmatrix} 0 \\ \frac{\omega}{Q} \end{bmatrix} $$
+$$ 
+L = 
+\begin{bmatrix} 
+0 
+\\ 
+\frac{\omega}{Q} 
+\end{bmatrix} 
+$$
 
 for some $Q$, the closed loop matrix becomes:
 
