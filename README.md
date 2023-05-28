@@ -220,6 +220,7 @@ tan(\varphi_2 - \varphi_1)
 $$
 
 Thus, we can observe that
+
 $$
 \Delta \varphi = atan2({h_2}_2 {h_1}_1 - {h_2}_1 {h_1}_2, {h_2}_1 {h_1}_1 - {h_2}_2 {h_1}_2)
 $$
