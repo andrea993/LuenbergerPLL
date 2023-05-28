@@ -44,7 +44,7 @@ void LPLL_step(const struct LPLL_SS *ss, double x[], double u, double y[])
 
 This function allows you to filter the signal $u_k$, which is your measurement, and outputs a vector $\underline y$. These are the two outputs of the filter, representing the reconstruction of the two coordinates of a rotating vector generating the wave you are measuring. The 2-element state of the digital filter $\underline x$ must be passed to the filter at each iteration.
 
-The `LPLL_step()` function is designed to be called at each sampling time $dt$ seconds, once you have sample your measurement.
+The LPLL_step() function is designed to be called at each sampling time, which is every $dt$ seconds, once you have taken your measurement.
 To initialize the tracking you should initialize the state vector in an initial state, for example:
 
 ```
