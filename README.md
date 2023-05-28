@@ -10,6 +10,11 @@ This repository hosts an implementation of an algorithm that is based on a speci
 
 The [Derivation](#derivation) section provides a detailed explanation of how this observer is derived. However, please be aware that if you're not familiar with Control Systems and Digital Signal Processing topics, it might be challenging to follow. Regardless, you can bypass that section and directly use the library which is designed to work right out of the box.
 
+## LPLL library
+The library in this repository consists of two files: [LPLL.h](LPLL.h) which you have to include in your source file and [LPLL.c](LPLL.c).
+
+In the library, the following structure is defined:
+
 ```
 struct LPLL_SS
 {
@@ -22,23 +27,31 @@ struct LPLL_SS
 
 This struct contains the discrete time filter parameters.
 
-There is also a function:
-
+In addition, the library provides the following function:
 ```
 struct LPLL_SS LPLL_filterDesign(double f0, double BW, double dt);
 ```
 
-This function allows you to design a filter and accepts an expected sine wave frequency $f_0$ in Hz, the filter bandwidth $BW$ in Hz, and the sampling time $dt$ in seconds as inputs.
+This function allows you to design a filter  taking in as input the expected sine wave frequency $f_0$ in Hz, the filter bandwidth $BW$ in Hz, and the sampling time $dt$ in seconds.
 
-The filter will track the sin wave from its measurement. You can choose the bandwidth $BW$ to set an uncertainty level on the sine wave frequency $f_0$. Please note, the wider the bandwidth, the more time the observer will need to converge to the sine wave.
+The designed filter is capable of tracking a sine wave based on its measurements. You can choose the bandwidth $BW$ to set an uncertainty level on the sine wave frequency $f_0$. Please note, however, that a wider bandwidth will require more time for the observer to converge to the sine wave.
 
-The function
+Additionally, the library provides the following function:
 
 ```
 void LPLL_step(const struct LPLL_SS *ss, double x[], double u, double y[]) 
 ```
 
-allows you to filter the the signal $u_k$ that is your measurement and obtain an output vector $\underline y$. These are two outputs of the filter, which represent the reconstruction of the two coordinates of a rotating vector that is generating the wave you're measuring. The digital filter's 2-element state $\underline x$ must be passed to the filter at each iteration.
+This function allows you to filter the signal $u_k$, which is your measurement, and outputs a vector $\underline y$. These are the two outputs of the filter, representing the reconstruction of the two coordinates of a rotating vector generating the wave you are measuring. The 2-element state of the digital filter $\underline x$ must be passed to the filter at each iteration.
+
+The `LPLL_step()` function is designed to be called at each sampling time $dt$ seconds, once you have sample your measurement.
+To initialize the tracking you should initialize the state vector in an initial state, for example:
+
+```
+double x[2] = { 0.0, 1.0 };
+```
+
+If you are interested in estimating the phase it's advisable to avoid the $(0,0)$ point because $atan2(0,0)$ is not well defined.
 
 You can see the [LPLL_test](LPLL_test.c) as example.
 
