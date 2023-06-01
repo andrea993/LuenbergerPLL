@@ -34,7 +34,7 @@ struct LPLL_SS LPLL_filterDesign(double f0, double BW, double dt);
 
 This function allows you to design a filter  taking in as input the expected sine wave frequency $f_0$ in Hz, the filter bandwidth $BW$ in Hz, and the sampling time $dt$ in seconds.
 
-The designed filter is capable of tracking a sine wave based on its measurements. You can choose the bandwidth $BW$ to set an uncertainty level on the sine wave frequency $f_0$. Please note, however, that a wider bandwidth will require more time for the observer to converge to the sine wave.
+The designed filter is capable of tracking a sine wave based on its measurements. You can choose the bandwidth $BW$ to set an uncertainty level on the sine wave frequency $f_0$. Please note, however, that a narrow bandwidth will require more time for the observer to converge to the sine wave.
 
 Additionally, the library provides the following function:
 
